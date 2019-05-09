@@ -1,5 +1,5 @@
 {
-  "name": "lazy-promise",
+  "name": "lazy-await",
   "version": "1.0.0",
   "description": "",
   "main": "dist/index.js",
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/BubbleBear/lazy-promise.git"
+    "url": "git+https://github.com/BubbleBear/lazy-await.git"
   },
   "author": {
     "name": "雪霁",
@@ -17,16 +17,18 @@
   },
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/BubbleBear/lazy-promise/issues"
+    "url": "https://github.com/BubbleBear/lazy-await/issues"
   },
-  "homepage": "https://github.com/BubbleBear/lazy-promise#readme",
+  "homepage": "https://github.com/BubbleBear/lazy-await#readme",
   "keywords": [
     "lazy",
     "chain",
     "chaining",
     "defer",
     "promise",
-    "then"
+    "then",
+    "async",
+    "await"
   ],
   "devDependencies": {
     "@types/node": "^12.0.0",
