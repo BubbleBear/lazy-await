@@ -6,7 +6,7 @@ type ReturnThenInfer<T> = (args?: any) => LazyPromise<ThenInfer<
     : T
 >>;
 
-type LazyPromise<T> = {
+export type LazyPromise<T> = {
     [P in keyof T]: ReturnThenInfer<T[P]>;
 }
 
