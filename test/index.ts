@@ -2,17 +2,21 @@ import proxy from '../src/index';
 
 !async function() {
     class A {
-        async a() {
+        async a(str: string) {
+            console.log(str);
+
             return new Promise<B>((resolve, reject) => {
                 resolve(new B);
             });
         }
     
-        
+        public x = this;
     }
     
     class B {
-        async b() {
+        async b(str: string) {
+            console.log(str);
+
             return new Promise<A>((resolve, reject) => {
                 resolve(new A);
             });
@@ -21,7 +25,7 @@ import proxy from '../src/index';
 
     const pa = proxy(new A);
 
-    const rpa = pa.a().b().a().b();
+    const rpa = pa.a(1).b(2).x().a(3).b(4);
 
     console.log(await rpa);
 }()
