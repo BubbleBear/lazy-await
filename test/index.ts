@@ -27,5 +27,7 @@ import proxy from '../src/index';
 
     const rpa = pa.a(1).b(2).x().a(3).b(4);
 
-    console.log(await rpa);
+    const x = await rpa;
+
+    console.log(x);
 }()

@@ -1,33 +1,41 @@
-type ThenInfer<T> = T extends Promise<infer U> ? U : T;
+type Prediction<T> = T extends Promise<infer U> ? U : T;
 
-type ReturnThenInfer<T> = (args?: any) => LazyPromise<ThenInfer<
-    T extends (args: any) => any
-    ? ReturnType<T>
-    : T
->>;
+type ReturnPrediction<T> = (...args: any) => T extends (...args: any) => any
+    ? LazyPromise<Prediction<ReturnType<T>>>
+    : LazyPromise<T>;
 
 export type LazyPromise<T> = {
-    [P in keyof T]: ReturnThenInfer<T[P]>;
+    [P in keyof T]: ReturnPrediction<T[P]>;
 }
 
-export default function proxy<T extends object>(object: T) {
-    const agent = new Proxy(object, {
+export default function chaining<T extends object>(object: T) {
+    const avatar = new Proxy(object, {
         get(target, key, _) {
             if (target instanceof Promise) {
                 if (target[key] !== undefined) {
 
                     return target[key].bind(target);
                 } else {
-                    return () => proxy(target.then((result) => {
+                    return (...args: any) => chaining(target.then((result) => {
 
-                        return result[key].call(result);
+                        if (typeof result[key] === 'function') {
+                            return result[key].call(result, ...args);
+                        }
+
+                        return result[key];
                     }));
                 }
             } else {
-                return () => proxy(target[key].bind(target)());
+                return (...args: any) => {
+                    if (typeof target[key] === 'function') {
+                        chaining(target[key].call(target, ...args));
+                    }
+                    
+                    return chaining(target[key]);
+                };
             }
         },
     });
 
-    return agent as LazyPromise<T>;
+    return avatar as LazyPromise<T>;
 }
