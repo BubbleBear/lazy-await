@@ -28,7 +28,7 @@ export default function chaining<T extends object>(object: T) {
             } else {
                 return (...args: any) => {
                     if (typeof target[key] === 'function') {
-                        chaining(target[key].call(target, ...args));
+                        return chaining(target[key].call(target, ...args));
                     }
                     
                     return chaining(target[key]);
