@@ -6,7 +6,9 @@ import proxy from '../src/index';
             console.log(str);
 
             return new Promise<B>((resolve, reject) => {
-                resolve(new B);
+                setTimeout(() => {
+                    resolve(new B);
+                }, 1000);
             });
         }
     
@@ -18,7 +20,9 @@ import proxy from '../src/index';
             console.log(str);
 
             return new Promise<A>((resolve, reject) => {
-                resolve(new A);
+                setTimeout(() => {
+                    resolve(new A);
+                }, 1000);
             });
         }
     }

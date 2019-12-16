@@ -1,23 +1,31 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-function proxy(object) {
-    const agent = new Proxy(object, {
+function chaining(object) {
+    const avatar = new Proxy(object, {
         get(target, key, _) {
             if (target instanceof Promise) {
                 if (target[key] !== undefined) {
                     return target[key].bind(target);
                 }
                 else {
-                    return () => proxy(target.then((result) => {
-                        return result[key].call(result);
+                    return (...args) => chaining(target.then((result) => {
+                        if (typeof result[key] === 'function') {
+                            return result[key].call(result, ...args);
+                        }
+                        return result[key];
                     }));
                 }
             }
             else {
-                return () => proxy(target[key].bind(target)());
+                return (...args) => {
+                    if (typeof target[key] === 'function') {
+                        return chaining(target[key].call(target, ...args));
+                    }
+                    return chaining(target[key]);
+                };
             }
         },
     });
-    return agent;
+    return avatar;
 }
-exports.default = proxy;
+exports.default = chaining;
