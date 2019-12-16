@@ -4,11 +4,11 @@ type ReturnPrediction<T> = (...args: any) => T extends (...args: any) => any
     ? LazyPromise<Prediction<ReturnType<T>>>
     : LazyPromise<T>;
 
-export type LazyPromise<T> = {
+type LazyPromise<T> = {
     [P in keyof T]: ReturnPrediction<T[P]>;
 }
 
-export default function chaining<T extends object>(object: T) {
+export = function chaining<T extends object>(object: T) {
     const avatar = new Proxy(object, {
         get(target, key, _) {
             if (target instanceof Promise) {

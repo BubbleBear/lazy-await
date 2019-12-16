@@ -1,6 +1,5 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-function chaining(object) {
+module.exports = function chaining(object) {
     const avatar = new Proxy(object, {
         get(target, key, _) {
             if (target instanceof Promise) {
@@ -27,5 +26,4 @@ function chaining(object) {
         },
     });
     return avatar;
-}
-exports.default = chaining;
+};
