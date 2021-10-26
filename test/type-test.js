@@ -1,39 +1,49 @@
-const proxy = require('../dist');
+const proxy = require('../')
 
-(async function () {
-    class A {
-        constructor() {
-            this.x = this;
-        }
-
-        async a(str) {
-            console.log(str);
-
-            return new Promise((resolve, reject) => {
-                setTimeout(() => {
-                    resolve(new B);
-                }, 1000);
-            });
-        }
+class A {
+    constructor() {
+        this.self = this;
     }
 
-    class B {
-        async b(str) {
-            console.log(str);
+    async b(val) {
+        console.log(val);
 
-            return new Promise((resolve, reject) => {
-                setTimeout(() => {
-                    resolve(new A);
-                }, 1000);
-            });
-        }
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                resolve(new B);
+            }, 100);
+        });
     }
+}
+
+class B {
+    constructor() {
+        this.primitive = 'primitive';
+    }
+
+    async a(val) {
+        console.log(val);
+
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                resolve(new A);
+            }, 100);
+        });
+    }
+}
+
+!async function () {
+    const a = new A;
+
+    const x = (await (await (await a.b(1)).a(2)).self.b(3)).primitive;
+
+    console.log(x);
 
     const pa = proxy(new A);
 
-    const rpa = pa.a(1).b(2).x().a(3).b(4);
+    const rpa = pa.b(1).a(2).self().b(3).primitive();
 
-    const x = await rpa;
+    const px = await rpa;
 
-    console.log(x);
-})();
+    console.log(px);
+}();

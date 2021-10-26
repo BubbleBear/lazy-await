@@ -28,18 +28,18 @@ class B {
     }
 }
 
-!async function () {
-    const a = new A;
+describe('lazy-promise', () => {
+    it('should chain up promise resolves', async () => {
+        const a = new A;
 
-    const x = (await (await (await a.b(1)).a(2)).self.b(3)).primitive;
+        const x = (await (await (await a.b(1)).a(2)).self.b(3)).primitive;
 
-    console.log(x);
+        const pa = proxy(new A);
 
-    const pa = proxy(new A);
+        const rpa = pa.b(1).a(2).self().b(3).primitive();
 
-    const rpa = pa.b(1).a(2).self().b(3).primitive();
+        const px = await rpa;
 
-    const px = await rpa;
-
-    console.log(px);
-}();
+        expect(px).toEqual(x);
+    });
+});
