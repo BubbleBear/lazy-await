@@ -6,7 +6,7 @@ type ReturnPrediction<T> = (
         : never
 ) => T extends (...args: any) => any
     ? LazyPromise<Prediction<ReturnType<T>>>
-    : LazyPromise<T>;
+    : LazyPromise<Prediction<T>>;
 
 type LazyPromise<T> = {
     [P in keyof T]: ReturnPrediction<T[P]>;

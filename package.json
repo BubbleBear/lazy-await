@@ -6,7 +6,8 @@
   "scripts": {
     "build": "tsc -d",
     "prepare": "husky install",
-    "test": "jest"
+    "test": "jest",
+    "type-check": "tsc --noEmit --allowJs --esModuleInterop test/type-test*"
   },
   "repository": {
     "type": "git",
