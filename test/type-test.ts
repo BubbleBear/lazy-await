@@ -1,4 +1,4 @@
-import proxy from '../src/index';
+import proxy from '../dist';
 
 !async function () {
     class A {
@@ -29,11 +29,11 @@ import proxy from '../src/index';
         }
     }
 
-    // const a = new A
+    const a = new A;
 
-    // const x = (await (await a.a(1)).b(2)).x
+    const x = (await (await a.b(1)).a(2)).self;
 
-    // console.log(x)
+    console.log(x);
 
     const pa = proxy(new A);
 

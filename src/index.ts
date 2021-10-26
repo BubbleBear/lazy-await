@@ -34,7 +34,7 @@ export = function chaining<T extends object>(object: T) {
                     if (typeof target[key] === 'function') {
                         return chaining(target[key].call(target, ...args));
                     }
-                    
+
                     return chaining(target[key]);
                 };
             }

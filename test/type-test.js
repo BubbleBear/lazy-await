@@ -1,4 +1,4 @@
-const proxy = require('../');
+const proxy = require('../dist');
 
 (async function () {
     class A {
