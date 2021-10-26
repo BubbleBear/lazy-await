@@ -1,8 +1,12 @@
 type Prediction<T> = T extends Promise<infer U> ? U : T;
 
-type ReturnPrediction<T> = (...args: any) => T extends (...args: any) => any
-    ? LazyPromise<Prediction<ReturnType<T>>>
-    : LazyPromise<T>;
+type ReturnPrediction<T> = (
+        ...args: T extends (...args: any) => any
+        ? Parameters<T>
+        : never
+    ) => T extends (...args: any) => any
+        ? LazyPromise<Prediction<ReturnType<T>>>
+        : LazyPromise<T>;
 
 type LazyPromise<T> = {
     [P in keyof T]: ReturnPrediction<T[P]>;

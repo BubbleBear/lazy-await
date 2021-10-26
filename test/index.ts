@@ -1,9 +1,11 @@
 import proxy from '../src/index';
 
-!async function() {
+!async function () {
     class A {
-        async a(str: string) {
-            console.log(str);
+        public self = this;
+
+        async b(val: any) {
+            console.log(val);
 
             return new Promise<B>((resolve, reject) => {
                 setTimeout(() => {
@@ -11,13 +13,13 @@ import proxy from '../src/index';
                 }, 1000);
             });
         }
-    
-        public x = this;
     }
-    
+
     class B {
-        async b(str: string) {
-            console.log(str);
+        public p = 'primitive';
+
+        async a(val: any) {
+            console.log(val);
 
             return new Promise<A>((resolve, reject) => {
                 setTimeout(() => {
@@ -27,11 +29,17 @@ import proxy from '../src/index';
         }
     }
 
+    // const a = new A
+
+    // const x = (await (await a.a(1)).b(2)).x
+
+    // console.log(x)
+
     const pa = proxy(new A);
 
-    const rpa = pa.a(1).b(2).x().a(3).b(4);
+    const rpa = pa.b(1).a(2).self().b(3).p();
 
-    const x = await rpa;
+    const px = await rpa;
 
-    console.log(x);
+    console.log(px);
 }()
