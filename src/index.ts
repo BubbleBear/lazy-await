@@ -12,8 +12,8 @@ type LazyPromise<T> = {
     [P in keyof T]: ReturnPrediction<T[P]>;
 }
 
-export = function chaining<T extends object>(object: T) {
-    const avatar = new Proxy(object, {
+export = function chaining<T extends object>(object: T): LazyPromise<T> {
+    return new Proxy(object, {
         get(target, key, _) {
             if (target instanceof Promise) {
                 if (target[key] !== undefined) {
@@ -21,8 +21,8 @@ export = function chaining<T extends object>(object: T) {
                     return target[key].bind(target);
                 } else {
                     return (...args: any) => chaining(target.then((result) => {
-
                         if (typeof result[key] === 'function') {
+
                             return result[key].call(result, ...args);
                         }
 
@@ -32,6 +32,7 @@ export = function chaining<T extends object>(object: T) {
             } else {
                 return (...args: any) => {
                     if (typeof target[key] === 'function') {
+
                         return chaining(target[key].call(target, ...args));
                     }
 
@@ -39,7 +40,5 @@ export = function chaining<T extends object>(object: T) {
                 };
             }
         },
-    });
-
-    return avatar as LazyPromise<T>;
+    }) as LazyPromise<T>;
 }
