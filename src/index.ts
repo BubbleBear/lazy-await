@@ -1,43 +1,57 @@
+type Callable = (...args: any) => any;
+
 type Prediction<T> = T extends Promise<infer U> ? U : T;
 
-type ReturnPrediction<T> = (
-    ...args: T extends (...args: any) => any
-        ? Parameters<T>
-        : never
-) => T extends (...args: any) => any
-    ? LazyPromise<Prediction<ReturnType<T>>>
+type ReturnPrediction<T> = T extends Callable 
+    ? (...args: Parameters<T>) => LazyPromise<Prediction<ReturnType<T>>>
     : LazyPromise<Prediction<T>>;
 
 type LazyPromise<T> = {
     [P in keyof T]: ReturnPrediction<T[P]>;
-} & Promise<T>
+}
 
 export = function chaining<T extends object>(object: T): LazyPromise<T> {
     return new Proxy(object, {
-        get(target, key, _) {
+        get(target, key) {
             if (target instanceof Promise) {
                 if (target[key] !== undefined) {
 
                     return target[key].bind(target);
                 } else {
-                    return (...args: any) => chaining(target.then((result) => {
-                        if (typeof result[key] === 'function') {
+                    const mixin = (...args: any) => chaining(target.then((result) => {
 
-                            return result[key].call(result, ...args);
-                        }
+                        return result[key].call(result, ...args);
+                    }));
+
+                    const promise = Promise.resolve(target.then((result) => {
 
                         return result[key];
-                    }));
+                    }))
+
+                    Object.setPrototypeOf(mixin, Object.getPrototypeOf(promise));
+
+                    return chaining(new Proxy(mixin, {
+                        get(target, key) {
+                            if (promise[key] !== undefined) {
+                                if (typeof promise[key] === 'function') {
+
+                                    return promise[key].bind(promise);
+                                }
+
+                                return promise[key];
+                            }
+
+                            return target[key];
+                        }
+                    }))
                 }
             } else {
-                return (...args: any) => {
-                    if (typeof target[key] === 'function') {
+                if (typeof target[key] === 'function') {
 
-                        return chaining(target[key].call(target, ...args));
-                    }
+                    return (...args: any) => chaining(target[key].call(target, ...args));
+                }
 
-                    return chaining(target[key]);
-                };
+                return chaining(target[key]);
             }
         },
     }) as LazyPromise<T>;

@@ -4,8 +4,6 @@ class A {
     }
 
     async b(val) {
-        console.log(val);
-
         return new Promise((resolve, reject) => {
             setTimeout(() => {
                 resolve(new B);
@@ -22,8 +20,6 @@ class B {
     }
 
     async a(val) {
-        console.log(val);
-
         return new Promise((resolve, reject) => {
             setTimeout(() => {
                 resolve(new A);
