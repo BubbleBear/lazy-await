@@ -10,7 +10,7 @@ type ReturnPrediction<T> = (
 
 type LazyPromise<T> = {
     [P in keyof T]: ReturnPrediction<T[P]>;
-}
+} & Promise<T>
 
 export = function chaining<T extends object>(object: T): LazyPromise<T> {
     return new Proxy(object, {

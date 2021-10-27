@@ -1,6 +1,6 @@
 "use strict";
 module.exports = function chaining(object) {
-    const avatar = new Proxy(object, {
+    return new Proxy(object, {
         get(target, key, _) {
             if (target instanceof Promise) {
                 if (target[key] !== undefined) {
@@ -25,5 +25,4 @@ module.exports = function chaining(object) {
             }
         },
     });
-    return avatar;
 };
